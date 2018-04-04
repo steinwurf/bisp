@@ -14,50 +14,44 @@
 TEST(test_spin_flipper, basic)
 {
     bisp::spin_flipper<> sf;
-    uint8_t spin_bits;
-
     EXPECT_EQ(boost::none, sf.rtt());
 
-    spin_bits = sf.outgoing();
-    sf.incomming(spin_bits);
-    EXPECT_EQ(1U, spin_bits);
+    EXPECT_EQ(1U, sf.outgoing());
+    sf.incomming(1U);
     EXPECT_EQ(std::chrono::milliseconds(0), sf.rtt());
 
-    spin_bits = sf.outgoing();
-    sf.incomming(spin_bits);
-    EXPECT_EQ(2U, spin_bits);
+    EXPECT_EQ(2U, sf.outgoing());
+    sf.incomming(2U);
     EXPECT_EQ(std::chrono::milliseconds(0), sf.rtt());
 }
 
 TEST(test_spin_sender, delay)
 {
     bisp::spin_flipper<> sf;
-    uint8_t spin_bits;
+    EXPECT_EQ(1U, sf.outgoing());
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    sf.incomming(1U);
+    EXPECT_LE(std::chrono::milliseconds(200), sf.rtt());
+    EXPECT_GE(std::chrono::milliseconds(1000), sf.rtt());
+    EXPECT_EQ(2U, sf.outgoing());
 
-    spin_bits = sf.outgoing();
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
-    sf.incomming(spin_bits);
-    EXPECT_EQ(1U, spin_bits);
-    EXPECT_EQ(std::chrono::milliseconds(20), sf.rtt());
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    sf.incomming(2U);
+    EXPECT_LE(std::chrono::milliseconds(200), sf.rtt());
+    EXPECT_GE(std::chrono::milliseconds(1000), sf.rtt());
+    EXPECT_EQ(3U, sf.outgoing());
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    sf.incomming(3U);
+    EXPECT_LE(std::chrono::milliseconds(100), sf.rtt());
+    EXPECT_GE(std::chrono::milliseconds(1000), sf.rtt());
+    EXPECT_EQ(0U, sf.outgoing());
 
-    spin_bits = sf.outgoing();
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
-    sf.incomming(spin_bits);
-    EXPECT_EQ(2U, spin_bits);
-    EXPECT_EQ(std::chrono::milliseconds(20), sf.rtt());
-
-    spin_bits = sf.outgoing();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    sf.incomming(spin_bits);
-    EXPECT_EQ(3U, spin_bits);
-    EXPECT_EQ(std::chrono::milliseconds(50), sf.rtt());
-
-    spin_bits = sf.outgoing();
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    sf.incomming(spin_bits);
-    EXPECT_EQ(0U, spin_bits);
-    EXPECT_EQ(std::chrono::milliseconds(10), sf.rtt());
+    std::this_thread::sleep_for(std::chrono::milliseconds(110));
+    sf.incomming(0U);
+    EXPECT_LE(std::chrono::milliseconds(110), sf.rtt());
+    EXPECT_GE(std::chrono::milliseconds(1000), sf.rtt());
+    EXPECT_EQ(1U, sf.outgoing());
 
 }

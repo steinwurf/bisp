@@ -3,7 +3,7 @@
 //
 // Distributed under the "BSD License". See the accompanying LICENSE.rst file.
 
-#include <bisp/spin_sender.hpp>
+#include <bisp/spin_flipper.hpp>
 
 #include <iostream>
 

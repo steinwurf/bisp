@@ -23,7 +23,7 @@ waf3-*
 .waf-*
 .waf3-*
 .lock-*
-build
+build*
 resolve_symlinks
 resolved_dependencies
 *.sh

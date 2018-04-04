@@ -75,7 +75,7 @@ private:
     uint8_t m_spin = 0;
 
     boost::optional<std::chrono::time_point<clock_type>>
-        m_last_edge = boost::none;
+    m_last_edge = boost::none;
 
     boost::optional<std::chrono::milliseconds> m_rtt = boost::none;
 

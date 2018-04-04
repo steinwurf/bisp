@@ -5,10 +5,22 @@
 
 #include <bisp/spin_flipper.hpp>
 
-#include <thread>
 #include <chrono>
 
 #include <gtest/gtest.h>
+
+namespace
+{
+using clock_type = std::chrono::high_resolution_clock;
+
+void wait(std::chrono::milliseconds ms)
+{
+    auto start = clock_type::now();
+
+    while (clock_type::now() - start < ms)
+    {}
+}
+}
 
 
 TEST(test_spin_flipper, basic)
@@ -23,6 +35,10 @@ TEST(test_spin_flipper, basic)
     EXPECT_EQ(2U, sf.outgoing());
     sf.incomming(2U);
     EXPECT_EQ(std::chrono::milliseconds(0), sf.rtt());
+    EXPECT_EQ(3U, sf.outgoing());
+
+    sf.incomming(1U);
+    EXPECT_EQ(3U, sf.outgoing());
 }
 
 TEST(test_spin_sender, delay)
@@ -30,28 +46,23 @@ TEST(test_spin_sender, delay)
     bisp::spin_flipper<> sf;
     EXPECT_EQ(1U, sf.outgoing());
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    wait(std::chrono::milliseconds(20));
     sf.incomming(1U);
-    EXPECT_LE(std::chrono::milliseconds(200), sf.rtt());
-    EXPECT_GE(std::chrono::milliseconds(1000), sf.rtt());
+    EXPECT_EQ(std::chrono::milliseconds(20), sf.rtt());
     EXPECT_EQ(2U, sf.outgoing());
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    wait(std::chrono::milliseconds(20));
     sf.incomming(2U);
-    EXPECT_LE(std::chrono::milliseconds(200), sf.rtt());
-    EXPECT_GE(std::chrono::milliseconds(1000), sf.rtt());
+    EXPECT_EQ(std::chrono::milliseconds(20), sf.rtt());
     EXPECT_EQ(3U, sf.outgoing());
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    wait(std::chrono::milliseconds(10));
     sf.incomming(3U);
-    EXPECT_LE(std::chrono::milliseconds(100), sf.rtt());
-    EXPECT_GE(std::chrono::milliseconds(1000), sf.rtt());
+    EXPECT_EQ(std::chrono::milliseconds(10), sf.rtt());
     EXPECT_EQ(0U, sf.outgoing());
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(110));
+    wait(std::chrono::milliseconds(11));
     sf.incomming(0U);
-    EXPECT_LE(std::chrono::milliseconds(110), sf.rtt());
-    EXPECT_GE(std::chrono::milliseconds(1000), sf.rtt());
+    EXPECT_EQ(std::chrono::milliseconds(11), sf.rtt());
     EXPECT_EQ(1U, sf.outgoing());
-
 }

@@ -61,8 +61,8 @@ TEST(test_spin_sender, delay)
     EXPECT_EQ(std::chrono::milliseconds(10), sf.rtt());
     EXPECT_EQ(0U, sf.outgoing());
 
-    wait(std::chrono::milliseconds(11));
+    wait(std::chrono::milliseconds(30));
     sf.incomming(0U);
-    EXPECT_EQ(std::chrono::milliseconds(11), sf.rtt());
+    EXPECT_EQ(std::chrono::milliseconds(30), sf.rtt());
     EXPECT_EQ(1U, sf.outgoing());
 }

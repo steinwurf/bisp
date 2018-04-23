@@ -46,9 +46,9 @@ TEST(test_spin_sender, delay)
     bisp::spin_flipper<> sf;
     EXPECT_EQ(1U, sf.outgoing());
 
-    wait(std::chrono::milliseconds(20));
+    wait(std::chrono::milliseconds(30));
     sf.incomming(1U);
-    EXPECT_EQ(std::chrono::milliseconds(20), sf.rtt());
+    EXPECT_EQ(std::chrono::milliseconds(30), sf.rtt());
     EXPECT_EQ(2U, sf.outgoing());
 
     wait(std::chrono::milliseconds(20));

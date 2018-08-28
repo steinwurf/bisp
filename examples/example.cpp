@@ -67,7 +67,8 @@ int main(int argc, char* argv[])
     boost::asio::io_service io;
     boost::asio::ip::udp::socket socket(io);
 
-    boost::asio::ip::address_v4 interface_ip = interface_ip_string.empty() ?
+    boost::asio::ip::address_v4 interface_ip =
+        interface_ip_string.empty() ?
         boost::asio::ip::address_v4::any() :
         boost::asio::ip::address_v4::from_string(interface_ip_string);
 

@@ -11,4 +11,4 @@ https://tools.ietf.org/html/draft-trammell-quic-spin-01
 Usage
 =====
 
-Here is how you use it...
+An example of how to use this library can be found in the examples folder.

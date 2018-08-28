@@ -11,18 +11,15 @@
 
 #include <boost/optional.hpp>
 
+#include "bit_spinner.hpp"
+
 namespace bisp
 {
 
-/// Sends a spin which is incremented each time the incomming spin is the same
+/// Sends a spin which is incremented each time the incoming spin is the same
 /// as the outgoing.
-template<uint8_t SpinValues = 4>
-class spin_flipper
+class spin_flipper : public bit_spinner
 {
-
-    static_assert(SpinValues > 1,
-                  "The number of spin values must be greater than 1");
-
 public:
 
     /// clock type
@@ -30,14 +27,20 @@ public:
 
 public:
 
+    spin_flipper(uint8_t spin_values = 4) :
+        m_spin_values(spin_values)
+    {
+        assert(m_spin_values > 1 && "The number of spin values must be greater than 1");
+    }
+
     /// Receive a spin
     /// @param spin the spin
-    void incomming(uint8_t spin)
+    void incoming(uint8_t spin) override
     {
-        assert(spin < SpinValues && "Received invalid spin value");
+        assert(spin < m_spin_values && "Received invalid spin value");
 
-        // Ignore if the incomming spin is not the answer to the outgoing
-        if (spin != ((m_spin + 1) % SpinValues))
+        // Ignore if the incoming spin is not the answer to the outgoing
+        if (spin != ((m_spin + 1) % m_spin_values))
         {
             return;
         }
@@ -55,22 +58,24 @@ public:
 
     /// Get the outgoing spin
     /// @return the outgoing spin
-    uint8_t outgoing()
+    uint8_t outgoing() override
     {
         if (m_last_edge == boost::none)
             m_last_edge = clock_type::now();
 
-        return (m_spin + 1) % SpinValues;
+        return (m_spin + 1) % m_spin_values;
     }
 
-    /// Get the instantanios measured RTT
+    /// Get the instantatious measured RTT
     /// @return the measured rtt between the last two received spins
-    boost::optional<std::chrono::milliseconds> rtt() const
+    boost::optional<std::chrono::milliseconds> rtt() const override
     {
         return m_rtt;
     }
 
 private:
+
+    const uint8_t m_spin_values;
 
     uint8_t m_spin = 0;
 

@@ -11,58 +11,55 @@
 
 namespace
 {
-using clock_type = std::chrono::high_resolution_clock;
-
 void wait(std::chrono::milliseconds ms)
 {
-    auto start = clock_type::now();
+    auto start = std::chrono::high_resolution_clock::now();
 
-    while (clock_type::now() - start < ms)
+    while (std::chrono::high_resolution_clock::now() - start < ms)
     {}
 }
 }
 
-
 TEST(test_spin_flipper, basic)
 {
-    bisp::spin_flipper<> sf;
+    bisp::spin_flipper sf;
     EXPECT_EQ(boost::none, sf.rtt());
 
     EXPECT_EQ(1U, sf.outgoing());
-    sf.incomming(1U);
+    sf.incoming(1U);
     EXPECT_EQ(std::chrono::milliseconds(0), sf.rtt());
 
     EXPECT_EQ(2U, sf.outgoing());
-    sf.incomming(2U);
+    sf.incoming(2U);
     EXPECT_EQ(std::chrono::milliseconds(0), sf.rtt());
     EXPECT_EQ(3U, sf.outgoing());
 
-    sf.incomming(1U);
+    sf.incoming(1U);
     EXPECT_EQ(3U, sf.outgoing());
 }
 
 TEST(test_spin_sender, delay)
 {
-    bisp::spin_flipper<> sf;
+    bisp::spin_flipper sf;
     EXPECT_EQ(1U, sf.outgoing());
 
     wait(std::chrono::milliseconds(30));
-    sf.incomming(1U);
+    sf.incoming(1U);
     EXPECT_EQ(std::chrono::milliseconds(30), sf.rtt());
     EXPECT_EQ(2U, sf.outgoing());
 
     wait(std::chrono::milliseconds(20));
-    sf.incomming(2U);
+    sf.incoming(2U);
     EXPECT_EQ(std::chrono::milliseconds(20), sf.rtt());
     EXPECT_EQ(3U, sf.outgoing());
 
     wait(std::chrono::milliseconds(10));
-    sf.incomming(3U);
+    sf.incoming(3U);
     EXPECT_EQ(std::chrono::milliseconds(10), sf.rtt());
     EXPECT_EQ(0U, sf.outgoing());
 
     wait(std::chrono::milliseconds(30));
-    sf.incomming(0U);
+    sf.incoming(0U);
     EXPECT_EQ(std::chrono::milliseconds(30), sf.rtt());
     EXPECT_EQ(1U, sf.outgoing());
 }

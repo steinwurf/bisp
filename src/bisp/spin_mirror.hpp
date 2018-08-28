@@ -11,17 +11,14 @@
 
 #include <boost/optional.hpp>
 
+#include "bit_spinner.hpp"
+
 namespace bisp
 {
 
-/// Mirrors the incomming spin.
-template<uint8_t SpinValues = 4>
-class spin_mirror
+/// Mirrors the incoming spin.
+class spin_mirror : public bit_spinner
 {
-
-    static_assert(SpinValues > 1,
-                  "The number of spin values must be greater than 1");
-
 public:
 
     /// clock type
@@ -29,16 +26,22 @@ public:
 
 public:
 
+    spin_mirror(uint8_t spin_values = 4) :
+        m_spin_values(spin_values)
+    {
+        assert(m_spin_values > 1 && "The number of spin values must be greater than 1");
+    }
+
     /// Receive a spin
     /// @param spin the spin
-    void incomming(uint8_t spin)
+    void incoming(uint8_t spin) override
     {
-        assert(spin < SpinValues && "Received invalid spin value");
+        assert(spin < m_spin_values && "Received invalid spin value");
 
         // skip update if this is the first received spin
         if (m_last_edge != boost::none)
         {
-            if (spin != ((m_spin + 1) % SpinValues))
+            if (spin != ((m_spin + 1) % m_spin_values))
                 return;
 
             m_rtt = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -51,19 +54,21 @@ public:
 
     /// Get the outgoing spin
     /// @return the outgoing spin
-    uint8_t outgoing() const
+    uint8_t outgoing() override
     {
         return m_spin;
     }
 
     /// Get the instantanios measured RTT
     /// @return the measured rtt between the last two received spins
-    boost::optional<std::chrono::milliseconds> rtt() const
+    boost::optional<std::chrono::milliseconds> rtt() const override
     {
         return m_rtt;
     }
 
 private:
+
+    const uint8_t m_spin_values;
 
     uint8_t m_spin = 0;
 

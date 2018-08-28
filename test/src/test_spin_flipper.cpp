@@ -40,26 +40,32 @@ TEST(test_spin_flipper, basic)
 
 TEST(test_spin_sender, delay)
 {
+    // Allow variation
+    uint32_t variation = 5;
     bisp::spin_flipper sf;
     EXPECT_EQ(1U, sf.outgoing());
 
     wait(std::chrono::milliseconds(30));
     sf.incoming(1U);
-    EXPECT_EQ(std::chrono::milliseconds(30), sf.rtt());
+    EXPECT_GE(std::chrono::milliseconds(30), sf.rtt());
+    EXPECT_LT(std::chrono::milliseconds(30 + variation), sf.rtt());
     EXPECT_EQ(2U, sf.outgoing());
 
     wait(std::chrono::milliseconds(20));
     sf.incoming(2U);
-    EXPECT_EQ(std::chrono::milliseconds(20), sf.rtt());
+    EXPECT_GE(std::chrono::milliseconds(20), sf.rtt());
+    EXPECT_LT(std::chrono::milliseconds(20 + variation), sf.rtt());
     EXPECT_EQ(3U, sf.outgoing());
 
     wait(std::chrono::milliseconds(10));
     sf.incoming(3U);
-    EXPECT_EQ(std::chrono::milliseconds(10), sf.rtt());
+    EXPECT_GE(std::chrono::milliseconds(10), sf.rtt());
+    EXPECT_LT(std::chrono::milliseconds(10 + variation), sf.rtt());
     EXPECT_EQ(0U, sf.outgoing());
 
     wait(std::chrono::milliseconds(30));
     sf.incoming(0U);
-    EXPECT_EQ(std::chrono::milliseconds(30), sf.rtt());
+    EXPECT_GE(std::chrono::milliseconds(30), sf.rtt());
+    EXPECT_LT(std::chrono::milliseconds(30 + variation), sf.rtt());
     EXPECT_EQ(1U, sf.outgoing());
 }

@@ -23,15 +23,15 @@ void wait(std::chrono::milliseconds ms)
 TEST(test_spin_flipper, basic)
 {
     bisp::spin_flipper sf;
-    EXPECT_EQ(boost::none, sf.rtt());
+    ASSERT_EQ(boost::none, sf.rtt());
 
     EXPECT_EQ(1U, sf.outgoing());
     sf.incoming(1U);
-    EXPECT_EQ(std::chrono::milliseconds(0), sf.rtt());
+    EXPECT_GE(sf.rtt().get(), std::chrono::milliseconds(0));
 
     EXPECT_EQ(2U, sf.outgoing());
     sf.incoming(2U);
-    EXPECT_EQ(std::chrono::milliseconds(0), sf.rtt());
+    EXPECT_GE(sf.rtt().get(), std::chrono::milliseconds(0));
     EXPECT_EQ(3U, sf.outgoing());
 
     sf.incoming(1U);
@@ -45,21 +45,21 @@ TEST(test_spin_sender, delay)
 
     wait(std::chrono::milliseconds(30));
     sf.incoming(1U);
-    EXPECT_EQ(std::chrono::milliseconds(30), sf.rtt());
+    EXPECT_GE(sf.rtt().get(), std::chrono::milliseconds(30));
     EXPECT_EQ(2U, sf.outgoing());
 
     wait(std::chrono::milliseconds(20));
     sf.incoming(2U);
-    EXPECT_EQ(std::chrono::milliseconds(20), sf.rtt());
+    EXPECT_GE(sf.rtt().get(), std::chrono::milliseconds(20));
     EXPECT_EQ(3U, sf.outgoing());
 
     wait(std::chrono::milliseconds(10));
     sf.incoming(3U);
-    EXPECT_EQ(std::chrono::milliseconds(10), sf.rtt());
+    EXPECT_GE(sf.rtt().get(), std::chrono::milliseconds(10));
     EXPECT_EQ(0U, sf.outgoing());
 
     wait(std::chrono::milliseconds(30));
     sf.incoming(0U);
-    EXPECT_EQ(std::chrono::milliseconds(30), sf.rtt());
+    EXPECT_GE(sf.rtt().get(), std::chrono::milliseconds(30));
     EXPECT_EQ(1U, sf.outgoing());
 }

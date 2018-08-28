@@ -68,7 +68,7 @@ public:
 
 private:
 
-    const uint8_t m_spin_values;
+    const uint8_t m_spin_values = 0;
 
     uint8_t m_spin = 0;
 

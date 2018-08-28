@@ -99,28 +99,32 @@ int main(int argc, char* argv[])
 
     std::function<void(const boost::system::error_code&,std::size_t)> callback;
     callback = std::bind(
-        [&](const auto& error, auto bytes) {
-            if (error)
-            {
-                std::cout << error.message() << std::endl;
-                return;
-            }
-            assert(bytes == 1);
-            bit_spinner->incoming(receive_buffer);
-            auto out = bit_spinner->outgoing();
-            auto rtt = bit_spinner->rtt();
-            if (rtt)
-                std::cout << remote << ": " <<  rtt.get().count() << " ms" << std::endl;
+        [&](const auto& error, auto bytes)
+    {
+        if (error)
+        {
+            std::cout << error.message() << std::endl;
+            return;
+        }
+        assert(bytes == 1);
+        bit_spinner->incoming(receive_buffer);
+        auto out = bit_spinner->outgoing();
+        auto rtt = bit_spinner->rtt();
+        if (rtt)
+            std::cout << remote << ": " <<  rtt.get().count() << " ms" << std::endl;
 
-            wait(std::chrono::milliseconds(30));
-            socket.send_to(boost::asio::buffer(&out, 1), remote, 0);
-            socket.async_receive(boost::asio::buffer(&receive_buffer, 1), callback);
-        },
-        std::placeholders::_1,
-        std::placeholders::_2);
+        wait(std::chrono::milliseconds(30));
+        socket.send_to(boost::asio::buffer(&out, 1), remote, 0);
+        socket.async_receive(boost::asio::buffer(&receive_buffer, 1), callback);
+    },
+    std::placeholders::_1,
+    std::placeholders::_2);
 
-    socket.async_receive_from(boost::asio::buffer(&receive_buffer, 1), remote, callback);
-    std::thread io_thread([&io]{
+    socket.async_receive_from(boost::asio::buffer(&receive_buffer, 1), remote,
+                              callback);
+
+    std::thread io_thread([&io]
+    {
         io.run();
     });
 

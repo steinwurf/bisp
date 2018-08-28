@@ -28,6 +28,7 @@ public:
 public:
 
     spin_flipper(uint8_t spin_values = 4) :
+        bit_spinner(),
         m_spin_values(spin_values)
     {
         assert(m_spin_values > 1 && "The number of spin values must be greater than 1");
@@ -70,6 +71,7 @@ public:
     /// @return the measured rtt between the last two received spins
     boost::optional<std::chrono::milliseconds> rtt() const override
     {
+        // assert(m_rtt != boost::none);
         return m_rtt;
     }
 

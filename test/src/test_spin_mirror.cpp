@@ -31,7 +31,7 @@ TEST(test_spin_mirror, basic)
 
     sm.incoming(2U);
     EXPECT_EQ(2U, sm.outgoing());
-    EXPECT_EQ(std::chrono::milliseconds(0), sm.rtt());
+    EXPECT_EQ(std::chrono::milliseconds(0), sm.rtt().get());
 }
 
 TEST(test_spin_receiver, delay)
@@ -45,23 +45,23 @@ TEST(test_spin_receiver, delay)
     wait(std::chrono::milliseconds(20));
     sm.incoming(3U);
     EXPECT_EQ(3U, sm.outgoing());
-    EXPECT_EQ(std::chrono::milliseconds(20), sm.rtt());
+    EXPECT_GE(sm.rtt().get(), std::chrono::milliseconds(20));
 
     wait(std::chrono::milliseconds(7));
     sm.incoming(0U);
     EXPECT_EQ(0U, sm.outgoing());
-    EXPECT_EQ(std::chrono::milliseconds(7), sm.rtt());
+    EXPECT_GE(sm.rtt().get(), std::chrono::milliseconds(7));
 
     wait(std::chrono::milliseconds(12));
     sm.incoming(1U);
     EXPECT_EQ(1U, sm.outgoing());
-    EXPECT_EQ(std::chrono::milliseconds(12), sm.rtt());
+    EXPECT_GE(sm.rtt().get(), std::chrono::milliseconds(12));
 
     sm.incoming(3U);
     EXPECT_EQ(1U, sm.outgoing());
-    EXPECT_EQ(std::chrono::milliseconds(12), sm.rtt());
+    EXPECT_GE(sm.rtt().get(), std::chrono::milliseconds(12));
 
     sm.incoming(0U);
     EXPECT_EQ(1U, sm.outgoing());
-    EXPECT_LE(std::chrono::milliseconds(12), sm.rtt());
+    EXPECT_GE(sm.rtt().get(), std::chrono::milliseconds(12));
 }

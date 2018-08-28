@@ -27,6 +27,7 @@ public:
 public:
 
     spin_mirror(uint8_t spin_values = 4) :
+        bit_spinner(),
         m_spin_values(spin_values)
     {
         assert(m_spin_values > 1 && "The number of spin values must be greater than 1");
@@ -68,7 +69,7 @@ public:
 
 private:
 
-    const uint8_t m_spin_values = 0;
+    const uint8_t m_spin_values;
 
     uint8_t m_spin = 0;
 

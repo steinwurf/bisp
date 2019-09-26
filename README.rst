@@ -2,6 +2,9 @@
 bisp
 ====
 
+.. image:: https://travis-ci.org/steinwurf/bisp.svg?branch=master
+    :target: https://travis-ci.org/steinwurf/bisp
+    
 BIt(s) SPin inspired by the Spin Bit proposed for use in QUIC
 https://tools.ietf.org/html/draft-trammell-quic-spin-01
 
